@@ -31,9 +31,7 @@ def main(params):
 
     # Download file
     url = params.url
-
-    # csv_name = 'output.csv'
-
+    
     file_content = download_file(url)
 
     # Decompress the file
