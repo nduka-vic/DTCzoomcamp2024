@@ -3,7 +3,7 @@
 
 # In[33]:
 
-import os
+# import os
 import argparse
 import pandas as pd
 import requests
@@ -22,6 +22,9 @@ def download_file(url):
         raise Exception(f"Failed to download file. Status code: {response.status_code}")
 
 def main(params):
+
+    # Unpack variables from argument
+
     user = params.user
     password = params.password
     db = params.db
@@ -39,23 +42,38 @@ def main(params):
         csv_name = f.read()
 
 
-    os.system(f"wget {url} -O {csv_name}")
+
+    # os.system(f"wget {url} -O {csv_name}")
+
+    
+    # Database connection..
 
     engine = create_engine(f'postgresql://{user}:{password}@{host}:{port}/{db}')
 
+    
+    # Read file from source in batches..
 
     df_iter = pd.read_csv(BytesIO(csv_name), iterator=True, chunksize=100000)
-
     df = next(df_iter)
+
+
+    # Basic transformation - convert to the right data type
 
     df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
     df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
 
 
+    # Extract the first row, genereate sql code, create db table - the header
+
     df.head(0).to_sql(name=table_name, con=engine, if_exists='replace')
 
 
+    # Generate sql code, insert into table 
+
     df.to_sql(name=table_name, con=engine, if_exists='append')
+
+
+    # Insert other batches into the table and stop once batch finishes...
 
     try:
         while True:
