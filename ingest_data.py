@@ -59,11 +59,11 @@ def main(params):
 
     # Basic transformation - convert to the right data type
 
-    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+    df.lpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
+    df.lpep_dropoff_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
 
 
-    # Extract the first row, genereate sql code, create db table - the header
+    # Extract the first row, genereate sql code, insert into table - the header
 
     df.head(0).to_sql(name=table_name, con=engine, if_exists='replace')
 
@@ -81,8 +81,8 @@ def main(params):
             t_start = time()
 
             df = next(df_iter)
-            df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
-            df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+            df.lpep_pickup_datetime = pd.to_datetime(df.lpep_pickup_datetime)
+            df.lpep_dropoff_datetime = pd.to_datetime(df.lpep_dropoff_datetime)
 
             df.to_sql(name=table_name, con=engine, if_exists='append')
 
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
 
     args = parser.parse_args()
-    main(args)
+    main(args) 
 
 
     
